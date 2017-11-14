@@ -7,9 +7,9 @@ $conn = [
     "driver" => "mysql",
     "host" => "127.0.0.1",
     "port" => null,
-    "database" => "cinema",
-    "username" => "root",
-    "password" => null
+    "database" => "algo_cinema",
+    "username" => "algo",
+    "password" => "algo"
 ];
 
 $manager = DB::getInstance();
