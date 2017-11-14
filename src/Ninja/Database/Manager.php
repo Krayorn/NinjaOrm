@@ -48,6 +48,7 @@ class Manager
                 $columnsFields = [];
                 array_push($columnsFields, $column['Field']);
                 array_push($columnsFields, $column['Type']);
+                array_push($columnsFields, $column['Extra']);
                 array_push($TablesColumns, $columnsFields);
             }
             $this->createModel(reset($table), $TablesColumns);
@@ -58,8 +59,24 @@ class Manager
 
         $class =    "<?php \n" .
                     "use Ninja\Database\Model; \n \n" .
-                    "class " . ucfirst(strtolower($tableName)) . " extends Model {\n" .
-                    "}\n";
+                    "class " . ucfirst(strtolower($tableName)) . " extends Model {\n";
+
+
+        $switch = "        switch (\$propname) {\n";
+
+        foreach ($columns as $col) {
+            $col[2] == 'auto_increment' ?: $class = $class . "    protected $" . $col[0] . ";\n";
+            $switch =   $switch . "            case '$col[0]':\n" .
+                        "                echo '\$propname == $col[0]';\n" .
+                        "                break;\n";
+        }
+
+        $class =    $class . "    public function __set(\$propname, \$value) {\n" .
+                    $switch . "        }\n" .
+                    "        \$this->\$propname = \$value;\n" .
+                    "    }\n";
+
+        $class = $class . "}\n";
 
         $handle = file_put_contents ('src/' . ucfirst(strtolower($tableName)) . '.php', $class);
     }

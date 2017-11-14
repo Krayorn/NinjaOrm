@@ -14,4 +14,17 @@ class Model {
     function save() {
 
     }
+
+    public function __get($propname) {
+        if (isset($this->$propname)) {
+            return $this->$propname;
+        } else {
+            throw new \Exception('Property `$propname`not set');
+        }
+    }
+
+    public function __set($propname, $value) {
+            $this->$propname = $value;
+    }
+
 }
