@@ -7,7 +7,7 @@ use PDOException;
 
 class Manager
 {
-    protected $dbh;
+    public $dbh;
     private static $instance = null;
 
     public static function getInstance() {
@@ -46,6 +46,7 @@ class Manager
             $res = $req->fetchAll(PDO::FETCH_ASSOC);
             foreach ($res as $column) {
                 $columnsFields = [];
+                var_dump($column);
                 array_push($columnsFields, $column['Field']);
                 array_push($columnsFields, $column['Type']);
                 array_push($columnsFields, $column['Extra']);
@@ -61,24 +62,24 @@ class Manager
                     "use Ninja\Database\Model; \n \n" .
                     "class " . ucfirst(strtolower($tableName)) . " extends Model {\n";
 
-
-        $switch = "        switch (\$propname) {\n";
-
+        $class .= "    protected \$fillable = [";
+        $first = true;
         foreach ($columns as $col) {
-            $col[2] == 'auto_increment' ?: $class = $class . "    protected $" . $col[0] . ";\n";
-            $switch =   $switch . "            case '$col[0]':\n" .
-                        "                echo '\$propname == $col[0]';\n" .
-                        "                break;\n";
+            if ($col[2] !== 'auto_increment') {
+                if ($first) {
+                    $class .= "'$col[0]'";
+                    $first = false;
+                } else {
+                    $class .= ", '$col[0]'";
+                }
+            }
         }
+        $class .= "];\n";
 
-        $class =    $class . "    public function __set(\$propname, \$value) {\n" .
-                    $switch . "        }\n" .
-                    "        \$this->\$propname = \$value;\n" .
-                    "    }\n";
+        $class .= "    protected \$tableName = '" . $tableName . "';\n";
 
-        $class = $class . "}\n";
+        $class .= "}\n";
 
         $handle = file_put_contents ('src/' . ucfirst(strtolower($tableName)) . '.php', $class);
     }
-
 }
