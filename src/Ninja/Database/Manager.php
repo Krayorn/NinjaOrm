@@ -47,10 +47,7 @@ class Manager
             foreach ($res as $column) {
                 $columnsFields = [];
                 var_dump($column);
-                array_push($columnsFields, $column['Field']);
-                array_push($columnsFields, $column['Type']);
-                array_push($columnsFields, $column['Extra']);
-                array_push($TablesColumns, $columnsFields);
+                array_push($TablesColumns, $column);
             }
             $this->createModel(reset($table), $TablesColumns);
         }
@@ -62,21 +59,33 @@ class Manager
                     "use Ninja\Database\Model; \n \n" .
                     "class " . ucfirst(strtolower($tableName)) . " extends Model {\n";
 
-        $class .= "    protected \$fillable = [";
-        $first = true;
+        $fillable = "    protected \$fillable = [";
+        $nullable = "    protected \$nullable = [";
+        $firstFillable = $firstNullable = true;
         foreach ($columns as $col) {
-            if ($col[2] !== 'auto_increment') {
-                if ($first) {
-                    $class .= "'$col[0]'";
-                    $first = false;
+            if ($col['Extra'] !== 'auto_increment') {
+                if ($firstFillable) {
+                    $fillable .= "'" . $col['Field'] .  "'";
+                    $firstFillable = false;
                 } else {
-                    $class .= ", '$col[0]'";
+                    $fillable .= ", '" . $col['Field'] .  "'";
+                }
+                if ($firstNullable) {
+                    if ($col['Null'] === "YES") {
+                        $nullable .= "'" . $col['Field'] .  "'";
+                        $firstNullable = false;
+                    }
+                } else {
+                    if ($col['Null'] === "YES") $nullable .= ", '" . $col['Field'] .  "'";
                 }
             }
         }
-        $class .= "];\n";
+        $fillable .= "];\n";
+        $nullable .= "];\n";
 
         $class .= "    protected \$tableName = '" . $tableName . "';\n";
+
+        $class .= $fillable . $nullable;
 
         $class .= "}\n";
 

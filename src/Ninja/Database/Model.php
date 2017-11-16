@@ -17,7 +17,7 @@ class Model {
         $table = $this->tableName;
         $data = [];
         foreach ($this->fillable as $value) {
-           if ($this->$value !== NULL) $data[$value] = $this->$value;
+            $data[$value] = $this->$value;
         }
         $query = 'INSERT INTO `' . $table . '` VALUES (NULL,';
         $first = true;
@@ -31,13 +31,16 @@ class Model {
         $query .= ')';
         $sth = $dbh->prepare($query);
         $sth->execute($data);
+        var_dump($sth);
     }
 
     public function __get($propname) {
         if (isset($this->fillable[$propname])) {
                 return $this->$propname;
+        } else if(in_array($propname, $this->nullable)) {
+            return NULL;
         } else {
-            throw new \Exception("Property `$propname`not set");
+            throw new \Exception("Property `$propname` not set");
         }
     }
 
