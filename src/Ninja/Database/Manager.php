@@ -89,6 +89,6 @@ class Manager
 
         $class .= "}\n";
 
-        $handle = file_put_contents ('src/' . ucfirst(strtolower($tableName)) . '.php', $class);
+        $handle = file_put_contents('src/' . ucfirst(strtolower($tableName)) . '.php', $class);
     }
 }
