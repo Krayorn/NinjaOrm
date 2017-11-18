@@ -71,12 +71,12 @@ class Manager
                     $fillable .= ", '" . $col['Field'] .  "'";
                 }
                 if ($firstNullable) {
-                    if ($col['Null'] === "YES") {
+                    if ($col['Null'] === 'YES') {
                         $nullable .= "'" . $col['Field'] .  "'";
                         $firstNullable = false;
                     }
                 } else {
-                    if ($col['Null'] === "YES") $nullable .= ", '" . $col['Field'] .  "'";
+                    if ($col['Null'] === 'YES') $nullable .= ", '" . $col['Field'] .  "'";
                 }
             }
         }

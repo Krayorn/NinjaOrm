@@ -2,7 +2,11 @@
 
 require_once('db.php');
 
-// $mySeances = Seance::find(['film_id'=> $argv[1], 'cinema_id' => $argv[2]]);
-$myFilm = Film::find(['id'=> $argv[3]]);
+$myFilm = Film::find()
+                ->whereOr(['director' => 'Collectif'])
+                // ->whereOr(['title' => 'Chicken run', 'id' => 61], "=", "AND")
+                // ->orderDesc(['title', 'director'])
+                ->orderAsc(['release_date'])
+                ->make();
 
 var_dump($myFilm);

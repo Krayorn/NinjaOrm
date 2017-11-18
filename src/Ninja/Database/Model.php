@@ -3,6 +3,8 @@
 namespace Ninja\Database;
 
 use Ninja\Database\Manager as DB;
+use Ninja\Database\QueryBuilder as QB;
+
 use PDO;
 use PDOException;
 
@@ -16,6 +18,7 @@ class Model {
     function getDbh() {
         return $this->conn->dbh;
     }
+
     // This function allow the user to save an object into his database as long
     // as there isn't a non-nullable field without a value
     public function save() {
@@ -46,36 +49,26 @@ class Model {
 
     // This function allow the user to find one or multiples objects in his database with multiples parameters in the WHERE
     public static function find($data = []) {
+        $qb = new QB();
+
         $caller = get_called_class();
         $object = new $caller;
-        $dbh = $object->getDbh();
 
-        $query = "SELECT * FROM " . $object->tableName . " WHERE ";
-        $first = true;
-        foreach ($data AS $key => $value) {
-            if (!$first)
-                $query .= " AND ";
-            else
-                $first = false;
-            $query .= $key . " = :" . $key;
-        }
+        $qb->object = $object;
+        $qb->type = 'Select';
 
-        $sth = $dbh->prepare($query);
-        $sth->execute($data);
-        $result = $sth->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result;
+        return $qb;
     }
 
 
 
     public function __get($propname) {
-        if (isset($this->fillable[$propname])) {
+        if (isset($this->fillable[$propname]) || $propname === 'tableName') {
                 return $this->$propname;
         } else if(in_array($propname, $this->nullable)) {
             return NULL;
         } else {
-            throw new \Exception("Property `$propname` not set");
+            throw new \Exception('Property ' . $propname . ' not set');
         }
     }
 
@@ -83,7 +76,7 @@ class Model {
         if (in_array($propname, $this->fillable)) {
             $this->$propname = $value;
         } else {
-            throw new \Exception("There is no property `$propname` on this element");
+            throw new \Exception('There is no property ' . $propname . ' on this element');
         }
     }
 
