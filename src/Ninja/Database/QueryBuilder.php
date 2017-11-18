@@ -16,6 +16,7 @@ class QueryBuilder {
 
     public function make() {
         switch ($this->type) {
+            // TODO: Make case for Update and Delete query
             case 'Select':
                 $query = 'SELECT * FROM ' . $this->object->tableName . $this->params['where'] . $this->params['order'];
                 break;
@@ -26,14 +27,26 @@ class QueryBuilder {
         $sth->execute();
 
         $result = $sth->fetchAll(PDO::FETCH_ASSOC);
-        return $result;
+        $list = [];
+        foreach ($result as $item) {
+            $obj = new $this->object;
+
+            foreach ($item as $key => $value) {
+                $obj->$key = $value;
+            }
+            array_push($list, $obj);
+        }
+
+        return $list;
     }
 
     public function whereOr($data, $sign = '=', $externOperator = 'OR') {
+        // TODO: Check the value given by the user
         return $this->where($data, $sign, 'OR', $externOperator);
     }
 
     public function whereAnd($data, $sign = '=', $externOperator = 'OR') {
+        // TODO: Check the value given by the user
         return $this->where($data, $sign, 'AND', $externOperator);
     }
 

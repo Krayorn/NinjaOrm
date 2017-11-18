@@ -2,11 +2,18 @@
 
 require_once('db.php');
 
-$myFilm = Film::find()
+$films = Film::find()
                 ->whereOr(['director' => 'Collectif'])
                 // ->whereOr(['title' => 'Chicken run', 'id' => 61], "=", "AND")
                 // ->orderDesc(['title', 'director'])
                 ->orderAsc(['release_date'])
                 ->make();
 
-var_dump($myFilm);
+foreach ($films as $film) {
+    $release_date = new DateTime($film->release_date);
+    echo "[".$film->id."] ".
+    $film->title
+    ." (".
+    $release_date->format("Y")
+    .") by " . $film->director  . "\n";
+}

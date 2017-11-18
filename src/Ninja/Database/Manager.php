@@ -84,6 +84,7 @@ class Manager
         $nullable .= "];\n";
 
         $class .= "    protected \$tableName = '" . $tableName . "';\n";
+        $class .= "    protected \$id;\n";
 
         $class .= $fillable . $nullable;
 

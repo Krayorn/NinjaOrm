@@ -47,7 +47,7 @@ class Model {
         return true;
     }
 
-    // This function allow the user to find one or multiples objects in his database with multiples parameters in the WHERE
+    // This function lauch the queryBuilder so the user can create more complex query easily
     public static function find($data = []) {
         $qb = new QB();
 
@@ -60,10 +60,8 @@ class Model {
         return $qb;
     }
 
-
-
     public function __get($propname) {
-        if (isset($this->fillable[$propname]) || $propname === 'tableName') {
+        if (isset($this->fillable[$propname]) || $propname === 'tableName' || $propname === 'id') {
                 return $this->$propname;
         } else if(in_array($propname, $this->nullable)) {
             return NULL;
@@ -75,8 +73,10 @@ class Model {
     public function __set($propname, $value) {
         if (in_array($propname, $this->fillable)) {
             $this->$propname = $value;
+        } else if($propname === 'id') {
+            $this->id = $value;
         } else {
-            throw new \Exception('There is no property ' . $propname . ' on this element');
+            throw new \Exception('There is no property ' . $propname . ' that you can set on this element');
         }
     }
 
