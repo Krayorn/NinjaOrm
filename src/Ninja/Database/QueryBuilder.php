@@ -5,7 +5,7 @@ namespace Ninja\Database;
 use PDO;
 use PDOException;
 
-class QueryBuilder {
+class QueryBuilder extends Logs {
     protected $type;
     protected $params;
     protected $object;
@@ -25,12 +25,18 @@ class QueryBuilder {
             case 'Delete':
                 $query = 'DELETE FROM ' . $this->object->tableName . $this->params['where'];
         }
-        echo $query;
+
+        $msc = microtime(true);
+
         $dbh = $this->object->getDbh();
         $sth = $dbh->prepare($query);
         $sth->execute();
-
         $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+        $msc = microtime(true) - $msc;
+        $line = "make() => " . $query;
+        $this->writeRequestLog($line, $msc);
+
         $list = [];
         foreach ($result as $item) {
             $obj = new $this->object;
@@ -75,8 +81,8 @@ class QueryBuilder {
         } else {
             $where .= ' WHERE ';
         }
-        // TODO: Improve function by allow a user to give an array of value in the whereOr functon
-        // like whereOr['title' => ['title1', 'title2']]
+            // TODO: Improve function by allow a user to give an array of value in the whereOr functon
+            // like whereOr['title' => ['title1', 'title2']]
         $where .= '(';
         $first = true;
         foreach ($data AS $key => $value) {

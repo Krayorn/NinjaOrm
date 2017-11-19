@@ -8,7 +8,7 @@ use Ninja\Database\QueryBuilder as QB;
 use PDO;
 use PDOException;
 
-class Model {
+class Model extends Logs {
     protected $conn;
 
     function __construct() {
@@ -41,8 +41,14 @@ class Model {
         }
         $query .= ')';
 
+        $msc = microtime(true);
+
         $sth = $dbh->prepare($query);
         $sth->execute($data);
+
+        $msc = microtime(true) - $msc;
+        $line = "save() => " . $query . " with " . implode("', '", $data);
+        $this->writeRequestLog($line, $msc);
 
         return true;
     }
@@ -92,7 +98,10 @@ class Model {
         } else if(in_array($propname, $this->nullable)) {
             return NULL;
         } else {
-            throw new \Exception('Property ' . $propname . ' not set');
+            $error = 'Property ' . $propname . ' not set';
+            $line = "__get(".$propname.") => " . $error;
+            $this->writeErrorLog($line);
+            throw new \Exception($error);
         }
     }
 
@@ -102,7 +111,10 @@ class Model {
         } else if($propname === 'id') {
             $this->id = $value;
         } else {
-            throw new \Exception('There is no property ' . $propname . ' that you can set on this element');
+            $error = 'There is no property ' . $propname . ' that you can set on this element';
+            $line = "__get(".$propname.") => " . $error;
+            $this->writeErrorLog($line);
+            throw new \Exception($error);
         }
     }
 
