@@ -3,11 +3,11 @@
 require_once('db.php');
 
 $films = Film::find()
-                ->whereOr(['director' => 'Collectif'])
-                // ->whereOr(['title' => 'Chicken run', 'id' => 61], "=", "AND")
-                // ->orderDesc(['title', 'director'])
-                ->orderAsc(['release_date'])
-                ->make();
+            ->where(['director' => 'Collectif'])
+            // ->whereOr(['title' => 'Chicken run', 'id' => 61], "=", "AND")
+            // ->orderDesc(['title', 'director'])
+            ->orderAsc(['release_date'])
+            ->make();
 
 foreach ($films as $film) {
     $release_date = new DateTime($film->release_date);

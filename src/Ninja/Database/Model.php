@@ -48,7 +48,7 @@ class Model {
     }
 
     // This function lauch the queryBuilder so the user can create more complex query easily
-    public static function find($data = []) {
+    public static function find() {
         $qb = new QB();
 
         $caller = get_called_class();
@@ -56,6 +56,32 @@ class Model {
 
         $qb->object = $object;
         $qb->type = 'Select';
+
+        return $qb;
+    }
+
+    public static function set($data) {
+        $qb = new QB();
+
+        $caller = get_called_class();
+        $object = new $caller;
+
+        $qb->object = $object;
+        $qb->type = 'Update';
+
+        $qb->set($data);
+
+        return $qb;
+    }
+
+    public static function delete() {
+        $qb = new QB();
+
+        $caller = get_called_class();
+        $object = new $caller;
+
+        $qb->object = $object;
+        $qb->type = 'Delete';
 
         return $qb;
     }

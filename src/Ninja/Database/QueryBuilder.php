@@ -11,15 +11,19 @@ class QueryBuilder {
     protected $object;
 
     function __construct() {
-        $this->params = ['where' => '', 'order' => ''];
+        $this->params = ['where' => '', 'order' => '', 'set' => ''];
     }
 
     public function make() {
         switch ($this->type) {
-            // TODO: Make case for Update and Delete query
             case 'Select':
                 $query = 'SELECT * FROM ' . $this->object->tableName . $this->params['where'] . $this->params['order'];
                 break;
+            case 'Update':
+                $query = 'UPDATE ' . $this->object->tableName . $this->params['set'] . $this->params['where'];
+                break;
+            case 'Delete':
+                $query = 'DELETE FROM ' . $this->object->tableName . $this->params['where'];
         }
         echo $query;
         $dbh = $this->object->getDbh();
@@ -40,7 +44,21 @@ class QueryBuilder {
         return $list;
     }
 
-    public function whereOr($data, $sign = '=', $externOperator = 'OR') {
+    public function set($data){
+        $query = ' SET ';
+        $first = true;
+        foreach ($data as $key => $value) {
+            if(!$first)
+                $query .= ', ';
+            else
+                $first = false;
+            $query .= $key . " = '" . $value . "'";
+        }
+
+        $this->params['set'] = $query;
+    }
+
+    public function whereOr($data, $sign = '=', $externOperator = 'AND') {
         // TODO: Check the value given by the user
         return $this->where($data, $sign, 'OR', $externOperator);
     }
@@ -50,14 +68,15 @@ class QueryBuilder {
         return $this->where($data, $sign, 'AND', $externOperator);
     }
 
-    protected function where($data, $sign, $insideOperator, $externOperator) {
+    public function where($data, $sign = '=', $insideOperator = 'AND', $externOperator = 'OR') {
         $where = '';
         if ($this->params['where'] !== '') {
             $where .= $this->params['where'] . ' ' . $externOperator . ' ';
         } else {
             $where .= ' WHERE ';
         }
-
+        // TODO: Improve function by allow a user to give an array of value in the whereOr functon
+        // like whereOr['title' => ['title1', 'title2']]
         $where .= '(';
         $first = true;
         foreach ($data AS $key => $value) {
@@ -111,5 +130,4 @@ class QueryBuilder {
     public function __set($propname, $value) {
         $this->$propname = $value;
     }
-
 }

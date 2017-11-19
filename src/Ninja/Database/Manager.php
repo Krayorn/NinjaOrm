@@ -23,7 +23,7 @@ class Manager
 
     public function addConnection($config) {
         $this->config=$config;
-        $dsn = $config['driver'].':dbname='.$config['database'].';host='.$config['host'];
+        $dsn = $config['driver'].':dbname='.$config['database'].';host='.$config['host'].';port='.$config['port'];
         $user = $config['username'];
         $password = $config['password'];
 
