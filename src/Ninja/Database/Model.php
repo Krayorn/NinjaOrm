@@ -20,9 +20,9 @@ class Model extends Logs {
         return $this->conn->dbh;
     }
 
-    // This function allow the user to save an object into his database as long
+    // This function allow the user to insert an object into his database as long
     // as there isn't a non-nullable field without a value
-    public function save() {
+    protected function insert() {
         $dbh = $this->getDbh();
         $table = $this->tableName;
         $data = [];
@@ -48,13 +48,41 @@ class Model extends Logs {
         $sth->execute($data);
 
         $msc = microtime(true) - $msc;
-        $line = "save() => " . $query . " with " . implode("', '", $data);
+        $line = "insert() => " . $query . " with " . implode("', '", $data);
         $this->writeRequestLog($line, $msc);
 
         return true;
     }
 
-    // This function lauch the queryBuilder so the user can create more complex query easily
+    // This function allow the user to save the current object
+    public function save() {
+        if(!isset($this->id)) {
+            $this->insert();
+        } else {
+            foreach ($this->fillable as $key => $value) {
+                $data[$key] = $this->$key;
+            }
+            $qb = $this::set($data);
+            $qb->where(['id' => $this->id])->make();
+            return true;
+        }
+    }
+
+    // This function allow the user to save the current object and all the objects inside that one
+    public function saveAll() {
+        if (isset($this::$has)) {
+            foreach ($this::$has as $key => $value) {
+                if(isset($this->$key)) {
+                    foreach ($this->$key as $item) {
+                        $item->saveAll();
+                        $item->save();
+                    }
+                }
+            }
+        }
+    }
+
+    // This function lauch the queryBuilder so the user can create more complex query easily to SELECT items from db
     public static function find() {
         $qb = new QB();
 
@@ -67,6 +95,7 @@ class Model extends Logs {
         return $qb;
     }
 
+    // This function lauch the queryBuilder so the user can create more complex query easily to UPDATE items from db
     public static function set($data) {
         $qb = new QB();
 
@@ -81,6 +110,7 @@ class Model extends Logs {
         return $qb;
     }
 
+    // This function lauch the queryBuilder so the user can create more complex query easily to DELETE items from db
     public static function delete() {
         $qb = new QB();
 

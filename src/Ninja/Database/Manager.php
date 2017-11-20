@@ -108,7 +108,8 @@ class Manager extends Logs {
                     $fillable .= ", \n                            ";
                 else
                     $firstFillable = false;
-                $fillable .= "'" . $col['Field'] .  "' => ['nullable' => '" . $col['Null'] . "', 'type' =>'" . $this->getTypeFromSql(explode("(", $col['Type'])[0]) . "']";
+                $fillable .= "'" . $col['Field'] .  "' => ['nullable' => '" . $col['Null'] . "', 'type' =>'" .
+                            $this->getTypeFromSql(explode("(", $col['Type'])[0]) . "']";
             }
         }
         $fillable .= "];\n";

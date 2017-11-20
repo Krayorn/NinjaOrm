@@ -38,6 +38,8 @@ class QueryBuilder extends Logs {
         $this->writeRequestLog($line, $msc);
 
         $list = [];
+
+        // Transform the current array in manipulable objects
         foreach ($result as $item) {
             $obj = new $this->object;
 
@@ -46,6 +48,7 @@ class QueryBuilder extends Logs {
             }
             if (isset($obj::$has)) {
                 foreach ($obj::$has as $key => $value) {
+                    // search all the objects links to the current object
                     $items = $key::find()->where([$value => $obj->id ])->make();
                     $obj->$key = $items;
                 }
@@ -71,12 +74,10 @@ class QueryBuilder extends Logs {
     }
 
     public function whereOr($data, $sign = '=', $externOperator = 'AND') {
-        // TODO: Check the value given by the user
         return $this->where($data, $sign, 'OR', $externOperator);
     }
 
     public function whereAnd($data, $sign = '=', $externOperator = 'OR') {
-        // TODO: Check the value given by the user
         return $this->where($data, $sign, 'AND', $externOperator);
     }
 
