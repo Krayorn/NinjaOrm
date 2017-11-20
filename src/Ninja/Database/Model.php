@@ -10,6 +10,7 @@ use PDOException;
 
 class Model extends Logs {
     protected $conn;
+    protected $id;
 
     function __construct() {
         $this->conn = DB::getInstance();
@@ -104,7 +105,7 @@ class Model extends Logs {
     }
 
     public function __set($propname, $value) {
-        if (isset($this->fillable[$propname])) {
+        if (isset($this->fillable[$propname]) || isset($this::$has[$propname])) {
             if($value === NULL) {
                 if ($this->fillable[$propname]['nullable'] === 'YES') {
                     $this->$propname = $value;
@@ -117,7 +118,7 @@ class Model extends Logs {
             }
             $this->$propname = $value;
         } else if($propname === 'id') {
-            $this->id = $value;
+            $this->$propname = $value;
         } else {
             $error = 'There is no property ' . $propname . ' that you can set on this element';
             $line = "__set(".$propname.") => " . $error;

@@ -3,7 +3,7 @@ use Ninja\Database\Model;
  
 class Seance extends Model {
     protected $tableName = 'seance';
-    protected $id;
+    public static $has;
     protected $fillable = ['film_id' => ['nullable' => 'NO', 'type' =>'int'], 
                             'start_horaire' => ['nullable' => 'NO', 'type' =>'datetime'], 
                             'end_horaire' => ['nullable' => 'NO', 'type' =>'datetime'], 
@@ -17,4 +17,7 @@ class Seance extends Model {
                             'repeat_event_json' => ['nullable' => 'YES', 'type' =>'string'], 
                             'booking_url' => ['nullable' => 'YES', 'type' =>'string'], 
                             'hidden' => ['nullable' => 'NO', 'type' =>'int']];
+    public static function has($data) {
+        Seance::$has = $data;
+    }
 }

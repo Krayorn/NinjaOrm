@@ -114,9 +114,12 @@ class Manager extends Logs {
         $fillable .= "];\n";
 
         $class .= "    protected \$tableName = '" . $tableName . "';\n";
-        $class .= "    protected \$id;\n";
-
+        $class .= "    public static \$has;\n";
         $class .= $fillable;
+
+        $class .= "    public static function has(\$data) {\n" .
+                    "        " . ucfirst(strtolower($tableName)) . "::\$has = \$data;\n" .
+                    "    }\n";
 
         $class .= "}\n";
 

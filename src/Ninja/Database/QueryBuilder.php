@@ -44,6 +44,12 @@ class QueryBuilder extends Logs {
             foreach ($item as $key => $value) {
                 $obj->$key = $value;
             }
+            if (isset($obj::$has)) {
+                foreach ($obj::$has as $key => $value) {
+                    $items = $key::find()->where([$value => $obj->id ])->make();
+                    $obj->$key = $items;
+                }
+            }
             array_push($list, $obj);
         }
 
