@@ -78,6 +78,22 @@ class Manager extends Logs {
 
     }
 
+    private function getTypeFromSql($type) {
+        switch ($type) {
+            case 'date':
+            case 'datetime':
+            case 'time':
+                return 'datetime';
+                break;
+            case 'int':
+                return 'int';
+                break;
+            default:
+                return 'string';
+                break;
+        }
+    }
+
     protected function createModel($tableName, $columns) {
 
         $class =    "<?php \n" .
@@ -85,33 +101,22 @@ class Manager extends Logs {
                     "class " . ucfirst(strtolower($tableName)) . " extends Model {\n";
 
         $fillable = "    protected \$fillable = [";
-        $nullable = "    protected \$nullable = [";
-        $firstFillable = $firstNullable = true;
+        $firstFillable = true;
         foreach ($columns as $col) {
             if ($col['Extra'] !== 'auto_increment') {
-                if ($firstFillable) {
-                    $fillable .= "'" . $col['Field'] .  "'";
+                if (!$firstFillable)
+                    $fillable .= ", \n                            ";
+                else
                     $firstFillable = false;
-                } else {
-                    $fillable .= ", '" . $col['Field'] .  "'";
-                }
-                if ($firstNullable) {
-                    if ($col['Null'] === 'YES') {
-                        $nullable .= "'" . $col['Field'] .  "'";
-                        $firstNullable = false;
-                    }
-                } else {
-                    if ($col['Null'] === 'YES') $nullable .= ", '" . $col['Field'] .  "'";
-                }
+                $fillable .= "'" . $col['Field'] .  "' => ['nullable' => '" . $col['Null'] . "', 'type' =>'" . $this->getTypeFromSql(explode("(", $col['Type'])[0]) . "']";
             }
         }
         $fillable .= "];\n";
-        $nullable .= "];\n";
 
         $class .= "    protected \$tableName = '" . $tableName . "';\n";
         $class .= "    protected \$id;\n";
 
-        $class .= $fillable . $nullable;
+        $class .= $fillable;
 
         $class .= "}\n";
 

@@ -26,8 +26,8 @@ class Model extends Logs {
         $table = $this->tableName;
         $data = [];
 
-        foreach ($this->fillable as $value) {
-            $data[$value] = $this->$value;
+        foreach ($this->fillable as $key => $value) {
+            $data[$key] = $this->$key;
         }
 
         $query = 'INSERT INTO `' . $table . '` VALUES (NULL,';
@@ -93,10 +93,8 @@ class Model extends Logs {
     }
 
     public function __get($propname) {
-        if (isset($this->fillable[$propname]) || $propname === 'tableName' || $propname === 'id') {
+        if (isset($this->$propname) || $propname === 'tableName' || $propname === 'id') {
                 return $this->$propname;
-        } else if(in_array($propname, $this->nullable)) {
-            return NULL;
         } else {
             $error = 'Property ' . $propname . ' not set';
             $line = "__get(".$propname.") => " . $error;
@@ -106,13 +104,23 @@ class Model extends Logs {
     }
 
     public function __set($propname, $value) {
-        if (in_array($propname, $this->fillable)) {
+        if (isset($this->fillable[$propname])) {
+            if($value === NULL) {
+                if ($this->fillable[$propname]['nullable'] === 'YES') {
+                    $this->$propname = $value;
+                } else {
+                    $error = 'The property ' . $propname . ' can\'t be NULL';
+                    $line = "__set(".$propname.") => " . $error;
+                    $this->writeErrorLog($line);
+                    throw new \Exception($error);
+                }
+            }
             $this->$propname = $value;
         } else if($propname === 'id') {
             $this->id = $value;
         } else {
             $error = 'There is no property ' . $propname . ' that you can set on this element';
-            $line = "__get(".$propname.") => " . $error;
+            $line = "__set(".$propname.") => " . $error;
             $this->writeErrorLog($line);
             throw new \Exception($error);
         }

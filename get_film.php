@@ -3,7 +3,7 @@
 require_once('db.php');
 
 $films = Film::find()
-            ->where(['director' => 'Collectif'])
+            ->where(['id' => 741])
             // ->whereOr(['title' => 'Chicken run', 'id' => 61], "=", "AND")
             // ->orderDesc(['title', 'director'])
             ->orderAsc(['release_date'])

@@ -3,5 +3,5 @@
 require_once('db.php');
 
 $Film = Film::delete()
-            ->where(['title' => 'Final test'])
+            ->where(['title' => 'NewFilmTest'])
             ->make();
