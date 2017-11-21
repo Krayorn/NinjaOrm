@@ -1,3 +1,5 @@
+Nathael Arki
+
 ## Installation
 
 1. Clônez le projet sur votre machine et placez-vous dans le dossier **NinjaOrm/**.
