@@ -10,7 +10,7 @@ cd NinjaOrm/
 
 3. Modifiez le fichier **db.php** avec les informations de votre base de données.
 
-4. Déplacez le fichier generate_entities.php à la racine du projet puis lancer la commande ```php generate_entities.php``` afin de créer automatiquement les Entités liées à votre base de données.
+4. Déplacez le fichier generate_model.php à la racine du projet puis lancer la commande ```php generate_model.php``` afin de créer automatiquement les Entités liées à votre base de données.
 
 5. Pour finir, indiquez dans le fichier **db.php** les relations entre vos différentes entités sous la forme One To Many, en précisant bien la colonne liant les deux entités.
 
@@ -19,7 +19,7 @@ EntityName::has(['EntityName' => 'ColumnName']);
 Film::has(['Seance' => 'film_id']);
 ```
 
-## Examples d'utilisation
+## Exemples d'utilisation
 
 Pour commencer à utiliser l'ORM et vous familiariser avec les méthodes, vous pouvez importez la base de données **ninjaOrm.sql** fournie dans le dossier exemple.
 

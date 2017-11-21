@@ -3,9 +3,9 @@
 require_once('db.php');
 
 $films = Film::find()
-            // ->where(['id' => 35])
-            ->whereOr(['title' => 'WilliamToutSeul', 'director' => 'Collectif'])
-            // ->orderDesc(['title', 'director'])
+            ->whereOr(['id' => 315])
+            ->where(['title' => 'WilliamToutSeul', 'director' => 'Collectif'])
+            ->orderDesc(['title', 'director'])
             ->orderAsc(['release_date'])
             ->make();
 
