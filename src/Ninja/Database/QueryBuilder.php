@@ -74,14 +74,14 @@ class QueryBuilder extends Logs {
     }
 
     public function whereOr($data, $sign = '=', $externOperator = 'AND') {
-        return $this->where($data, $sign, 'OR', $externOperator);
+        return $this->where($data, $sign, $externOperator, 'OR');
     }
 
     public function whereAnd($data, $sign = '=', $externOperator = 'OR') {
-        return $this->where($data, $sign, 'AND', $externOperator);
+        return $this->where($data, $sign, $externOperator, 'AND');
     }
 
-    public function where($data, $sign = '=', $insideOperator = 'AND', $externOperator = 'OR') {
+    public function where($data, $sign = '=', $externOperator = 'OR', $insideOperator = 'AND') {
         $where = '';
         if ($this->params['where'] !== '') {
             $where .= $this->params['where'] . ' ' . $externOperator . ' ';

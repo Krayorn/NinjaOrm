@@ -2,14 +2,14 @@
 
 require_once('db.php');
 
-$Film = Film::remove()
-            ->where(['director' => 'RandomAuthor'])
-            ->make();
-
-// $filmToDelete = Film::find()
-//             ->where(['id' => '761'])
+// Film::remove()
+//             ->where(['title' => 'WilliamToutSeul'])
 //             ->make();
 
-// $film = $filmToDelete[0];
+$filmToDelete = Film::find()
+            ->where(['id' => '741'])
+            ->make();
 
-// $film->deleteAll();
+$film = $filmToDelete[0];
+
+$film->deleteAll();
