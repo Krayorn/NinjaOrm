@@ -12,8 +12,8 @@ $conn = [
     "password" => "algo"
 ];
 
-Film::has(['Seance' => 'film_id']);
-Cinema::has(['Seance' => 'cinema_id']);
+// Film::has(['Seance' => 'film_id']);
+// Cinema::has(['Seance' => 'cinema_id']);
 
 $manager = DB::getInstance();
 $manager->addConnection($conn);
