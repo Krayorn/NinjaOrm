@@ -3,10 +3,10 @@
 require_once('db.php');
 
 $films = Film::find()
-            ->where(['id' => 35])
-            // ->whereOr(['title' => 'Chicken run', 'id' => 61], "=", "AND")
+            // ->where(['id' => 35])
+            ->whereOr(['title' => 'WilliamToutSeul', 'director' => 'Collectif'])
             // ->orderDesc(['title', 'director'])
-            // ->orderAsc(['release_date'])
+            ->orderAsc(['release_date'])
             ->make();
 
 foreach ($films as $film) {
