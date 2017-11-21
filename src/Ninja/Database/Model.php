@@ -75,11 +75,40 @@ class Model extends Logs {
                 if(isset($this->$key)) {
                     foreach ($this->$key as $item) {
                         $item->saveAll();
-                        $item->save();
                     }
                 }
             }
         }
+        $this->save();
+    }
+    // This function allow the user to delete the current object
+    public function delete() {
+        if(!isset($this->id)) {
+            $error = 'We need an id to delete an object with this method, if you don\'t have any, use the static remove instead';
+            $line = "delete(".$propname.") => " . $error;
+            $this->writeErrorLog($line);
+            throw new \Exception($error);
+        } else {
+            foreach ($this->fillable as $key => $value) {
+                $data[$key] = $this->$key;
+            }
+            $qb = $this::remove();
+            $qb->where(['id' => $this->id])->make();
+            return true;
+        }
+    }
+    // This function allow the user to delete the current object and all the objects inside that one
+    public function deleteAll() {
+        if (isset($this::$has)) {
+            foreach ($this::$has as $key => $value) {
+                if(isset($this->$key)) {
+                    foreach ($this->$key as $item) {
+                        $item->deleteAll();
+                    }
+                }
+            }
+        }
+        $this->delete();
     }
 
     // This function lauch the queryBuilder so the user can create more complex query easily to SELECT items from db
@@ -111,7 +140,7 @@ class Model extends Logs {
     }
 
     // This function lauch the queryBuilder so the user can create more complex query easily to DELETE items from db
-    public static function delete() {
+    public static function remove() {
         $qb = new QB();
 
         $caller = get_called_class();
